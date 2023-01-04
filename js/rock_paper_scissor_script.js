@@ -1,23 +1,25 @@
+// Add scoreboard div
+const scoreDiv = document.createElement("div");
+document.body.insertBefore(scoreDiv, document.body.firstChild);
 
-game();
+// Add button event listeners
+const buttons = document.querySelectorAll("button");
+buttons.forEach(button => button.addEventListener('click', buttonClicked));
 
+let playerScore = 0;
+let computerScore = 0;
 
-// Start game
-function game(){
+// Start game and assign player input
+function buttonClicked(e){
+
+    // Get computer choice
+    let computerSelection = getComputerChoice();
     
-    // Loop through 5 rounds (best of 5)
-    for(i = 0; i < 5; i++){
-
-        // Get computer choice
-        let computerSelection = getComputerChoice();
-
-        // Get players choice
-        let playerSelection = prompt("Pick between 'Rock, Paper, or Scissors'.", "");
-
-        // Start round
-        playRound(playerSelection, computerSelection);
-    }
-
+    // Get players choice
+    let playerSelection = e.target.id;
+    
+    // Start round
+    playRound(playerSelection, computerSelection);
 }
 
 function getComputerChoice(){
@@ -33,9 +35,17 @@ function playRound(playerSelection, computerSelection){
     computerSelection = computerSelection.toLowerCase();
 
     // Output function variables
-    let win = (playerChoice, computerChoice) => console.log(`You WIN! ${playerChoice} beats ${computerChoice}`);
-    let lose = (playerChoice, computerChoice) => console.log(`You lose! ${computerChoice} beats ${playerChoice}`);
-    let draw = (playerChoice) => console.log(`No one wins! You both chose: ${playerChoice}`);
+    let win = (playerChoice, computerChoice) => {
+        playerScore++;
+        scoreDiv.innerText = `You WIN!\n ${playerChoice} beats ${computerChoice}\n` + getCurrentScores();
+    }
+    let lose = (playerChoice, computerChoice) => {
+        computerScore++;
+        scoreDiv.innerText = `You lose!\n ${computerChoice} beats ${playerChoice}\n` + getCurrentScores();
+    }
+    let draw = (playerChoice) => {
+        scoreDiv.innerText = `No one wins!\n You both chose: ${playerChoice}\n` + getCurrentScores();
+    }
 
 
     // Compare choices and output message
@@ -88,5 +98,16 @@ function playRound(playerSelection, computerSelection){
         default:
             alert("You must enter a valid option");
     }
+
+    // Announce winner
+    if(playerScore >= 5)
+        scoreDiv.innerText = "YOU WON THE MATCH! HOORAY";
+    else if(computerScore >= 5){
+        scoreDiv.innerText = "THE COMPUTER WON THE MATCH! Better luck next time."
+    }
+}
+
+function getCurrentScores(){
+    return `Player: ${playerScore}\nComputer: ${computerScore}`
 }
 
